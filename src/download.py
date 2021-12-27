@@ -1,15 +1,20 @@
 """
 Download files one by one.
 """
-
+import logging
 from pathlib import Path
 import subprocess
-import time
 
+from tenacity import wait_exponential, Retrying, before_sleep_log
 import pandas as pd
 
 DATA_FOLDER = Path("data")
 COMPETITION_NAME = "birdclef-2021"
+
+
+logging.basicConfig(level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
 
 
 def exec_cmd(cmd):
@@ -26,7 +31,7 @@ def download_one(primary_label: str, filename: str):
 
     if Path(target_file).exists():
         print(f"File exists, skipping downloading: {target_file}")
-        pass
+        return
 
     cmd = [
         "kaggle",
@@ -39,7 +44,12 @@ def download_one(primary_label: str, filename: str):
         f"train_short_audio/{primary_label}/{filename}",
     ]
 
-    exec_cmd(cmd)
+    for attempt in Retrying(
+        wait=wait_exponential(multiplier=1, min=30, max=300),
+        before_sleep=before_sleep_log(logger, logging.DEBUG),
+    ):
+        with attempt:
+            exec_cmd(cmd)
 
     if not target_file.exists():
         zip_file = Path(f"{target_file}.zip")
@@ -64,7 +74,6 @@ def download(metadata_file: Path):
 
     for row in primary_label_and_filename:
         download_one(*row)
-        time.sleep(1)
 
 
 if __name__ == "__main__":
