@@ -36,6 +36,13 @@ List all files in CSV format
 $ kaggle competitions files birdclef-2021 --csv
 ```
 
+Download `train_metadata.csv`:
+
+```bash
+$ kaggle competitions download birdclef-2021 -p data -f train_metadata.csv
+$ unzip data/train_metadata.csv.zip -d data
+```
+
 ### Setup Jupyter
 
 Install kernel:
