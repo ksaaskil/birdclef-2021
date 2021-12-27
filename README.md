@@ -50,3 +50,57 @@ Install kernel:
 ```bash
 $ python -m ipykernel install --user --name bird-3.8.1 --display-name "Python (bird-3.8.1)"
 ```
+
+## Resources
+
+- [Overview of BirdCLEF 2021](http://ceur-ws.org/Vol-2936/paper-123.pdf)
+- [Where to start: A collection of resources](https://www.kaggle.com/c/birdclef-2021/discussion/230000)
+- [Best working note awards](https://www.kaggle.com/c/birdclef-2021/discussion/252995)
+
+## Tips
+
+### Downloading data
+
+Create a GCP VM with at least 100 GB disk space. Give write access to Google Storage API.
+
+SSH to the instance.
+
+Install `pip` and `tmux`:
+
+```bash
+$ sudo apt install python3-pip tmux unzip
+```
+
+Install Kaggle CLI:
+
+```bash
+$ pip3 install kaggle
+```
+
+Make directory `.kaggle` and transfer `kaggle.json` from your machine:
+
+```bash
+$ scp ~/.kaggle/kaggle.json USERNAME@VM_IP:~/.kaggle/kaggle.json
+```
+
+Create new tmux session:
+
+```bash
+$ tmux new -s kimmo
+```
+
+Download data to folder `data/`:
+
+```bash
+$ chmod 600 ~/.kaggle/kaggle.json
+$ ./.local/bin/kaggle competitions download birdclef-2021 -p data
+```
+
+Detach from the session with `Ctrl+b d` and attach with `tmux a -t kimmo`.
+
+Extract and copy data to Google bucket `bird-clef-kimmo`:
+
+```bash
+$ unzip data/birdclef-2021.zip -d data
+$ gsutil -m rsync -r data gs://bird-clef-kimmo/data
+```
