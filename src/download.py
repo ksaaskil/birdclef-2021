@@ -2,7 +2,7 @@
 Download files one by one.
 """
 
-from pathlib import Path, PosixPath
+from pathlib import Path
 import subprocess
 import time
 
@@ -10,8 +10,6 @@ import pandas as pd
 
 DATA_FOLDER = Path("data")
 COMPETITION_NAME = "birdclef-2021"
-
-# kaggle competitions download birdclef-2021 -p data/train_short_audio/acafly -f train_short_audio/acafly/XC109605.ogg
 
 
 def exec_cmd(cmd):
@@ -67,20 +65,6 @@ def download(metadata_file: Path):
     for row in primary_label_and_filename:
         download_one(*row)
         time.sleep(1)
-
-    """ cmds = [
-        make_cmd(f"{primary_label}/{filename}")
-        for primary_label, filename in primary_label_and_filename
-    ]
-
-    print(f"Executing {len(cmds)} commands")
-    for cmd in cmds:
-        # print(f"Executing command: {' '.join(cmd)}")
-        result = subprocess.run(cmd)
-        time.sleep(1)
-        if result.returncode != 0:
-            raise Exception(f"Command failed: {cmd}")
- """
 
 
 if __name__ == "__main__":
