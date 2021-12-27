@@ -1,0 +1,3 @@
+[submodule "reverse-geocoder"]
+	path = reverse-geocoder
+	url = https://github.com/thampiman/reverse-geocoder
