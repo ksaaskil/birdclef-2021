@@ -64,6 +64,8 @@ $ python -m ipykernel install --user --name bird-3.8.1 --display-name "Python (b
 - [Bird audio detection challenge](http://dcase.community/challenge2018/task-bird-audio-detection)
 - [mixup: Beyond Empirical Risk Minimization](https://arxiv.org/abs/1710.09412)
 - [SpecAugment: A Simple Data Augmentation Method for Automatic Speech Recognition](https://arxiv.org/abs/1904.08779)
+- [TensorFlow IO Audio](https://www.tensorflow.org/io/tutorials/audio)
+- [Simple Audio Recognition with TensorFlow](https://www.tensorflow.org/tutorials/audio/simple_audio)
 
 ## Tips
 
