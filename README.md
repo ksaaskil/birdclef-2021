@@ -18,7 +18,7 @@ Sign in to Kaggle. Follow the [instructions](https://github.com/Kaggle/kaggle-ap
 
 See the [Data](https://www.kaggle.com/c/birdclef-2021/data) page.
 
-Download the 39 GiB dataset:
+Download the full 39 GiB dataset:
 
 ```bash
 $ kaggle competitions download birdclef-2021 -p data
