@@ -63,9 +63,13 @@ $ python -m ipykernel install --user --name bird-3.8.1 --display-name "Python (b
 
 Create a GCP VM with at least 100 GB disk space. Give write access to Google Storage API.
 
-SSH to the instance.
+SSH to the instance using:
 
-Install `pip` and `tmux`:
+```bash
+$ gcloud compute ssh INSTANCE_NAME
+```
+
+Install `pip`, `tmux` and `unzip`:
 
 ```bash
 $ sudo apt install python3-pip tmux unzip
@@ -103,4 +107,11 @@ Extract and copy data to Google bucket `bird-clef-kimmo`:
 ```bash
 $ unzip data/birdclef-2021.zip -d data
 $ gsutil -m rsync -r data gs://bird-clef-kimmo/data
+```
+
+List and stop instances:
+
+```bash
+$ gcloud compute instances list
+$ gcloud compute instances stop INSTANCE_NAME
 ```
