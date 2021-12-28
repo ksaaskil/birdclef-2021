@@ -2,12 +2,12 @@ from pathlib import Path
 import typing
 
 import pandas as pd
-import reverse_geocoder as rg
 
 DATA_FOLDER = Path("data")
 
 
 def add_country(df):
+    import reverse_geocoder as rg
     latlng = df[["latitude", "longitude"]].apply(tuple, axis=1)
     places = rg.search(list(latlng))
     countries = [place["cc"] for place in places]
