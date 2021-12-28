@@ -56,6 +56,14 @@ $ python -m ipykernel install --user --name bird-3.8.1 --display-name "Python (b
 - [Overview of BirdCLEF 2021](http://ceur-ws.org/Vol-2936/paper-123.pdf)
 - [Where to start: A collection of resources](https://www.kaggle.com/c/birdclef-2021/discussion/230000)
 - [Best working note awards](https://www.kaggle.com/c/birdclef-2021/discussion/252995)
+- [EfficientNet explained](https://paperswithcode.com/method/efficientnet)
+- [LifeCLEF2022](https://www.imageclef.org/LifeCLEF2022)
+- [freefield1010 dataset](https://arxiv.org/pdf/1309.5275.pdf)
+- [Birdcall Identification Using CNN and Gradient Boosting Decision Trees with Weak and Noisy Supervision](http://ceur-ws.org/Vol-2936/paper-136.pdf)
+- [Winning solution of BirdCLEF2021](https://github.com/namakemono/kaggle-birdclef-2021)
+- [Bird audio detection challenge](http://dcase.community/challenge2018/task-bird-audio-detection)
+- [mixup: Beyond Empirical Risk Minimization](https://arxiv.org/abs/1710.09412)
+- [SpecAugment: A Simple Data Augmentation Method for Automatic Speech Recognition](https://arxiv.org/abs/1904.08779)
 
 ## Tips
 
