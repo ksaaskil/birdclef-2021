@@ -35,3 +35,8 @@ def read_classes() -> typing.Sequence[str]:
 
 def primary_label_to_tensor(primary_label: str, classes: typing.Sequence[str]) -> tf.Tensor:
     return tf.cast(classes == primary_label, tf.int32)
+
+def tensor_to_class(label: tf.Tensor, classes: typing.Sequence[str]) -> str:
+    label_index = np.argmax(label.numpy())
+    return classes[label_index]
+
