@@ -15,6 +15,8 @@ TRAIN_SHORT_AUDIO_DATA = f"{DATA_ROOT}/train_short_audio"
 SR = 32000
 SPLIT_SECS = 5
 
+BATCH_SIZE = 32
+
 def short_audio_metadata_csv(data_root: str) -> str:
     return f"{data_root}/train_metadata.csv"
 
@@ -90,11 +92,11 @@ def add_label(classes: typing.Sequence[str]):
     return add_
 
 def drop_keys(*keys):
-    def drop(rows):
-        rows = rows.copy()
+    def drop(sample, label):
+        sample = sample.copy()
         for key in keys:
-            rows.pop(key)
-        return rows
+            sample.pop(key)
+        return sample, label
     return drop
 
 def add_spectrogram(sample, label):
@@ -114,4 +116,7 @@ def add_fold(buckets=5):
 def short_audio_ds(data_root=DATA_ROOT) -> tf.data.Dataset:
     metadata_ds = short_audio_metadata_ds(data_root=data_root)
     classes = classes_(metadata_ds)
-    return metadata_ds.map(add_label(classes)).map(add_fold()).map(add_audio_fn).flat_map(split_to_segments).map(add_spectrogram)
+    return metadata_ds.map(add_label(classes)).map(add_fold()).map(add_audio_fn).flat_map(split_to_segments).map(add_spectrogram, num_parallel_calls=tf.data.AUTOTUNE).map(drop_keys("audio"), num_parallel_calls=tf.data.AUTOTUNE)
+
+def configure_for_training(ds: tf.data.Dataset) -> tf.data.Dataset:
+    return ds.cache().batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
