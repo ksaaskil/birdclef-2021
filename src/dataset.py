@@ -13,18 +13,18 @@ TRAIN_SHORT_AUDIO_DATA = f"{DATA_ROOT}/train_short_audio"
 SR = 32000
 SPLIT_SECS = 5
 
-def train_metadata_csv(data_root: str) -> str:
+def short_audio_metadata_csv(data_root: str) -> str:
     return f"{data_root}/train_metadata.csv"
 
 COLUMNS = [  "primary_label","secondary_labels","type","latitude","longitude","scientific_name","common_name","date","filename","rating","time"
 ]
 
-def train_metadata_ds(data_root=DATA_ROOT) -> tf.data.Dataset:
+def short_audio_metadata_ds(data_root=DATA_ROOT) -> tf.data.Dataset:
     def squeeze(row):
         return { key: tf.squeeze(value, axis=0) for key, value in row.items() }
 
     return tf.data.experimental.make_csv_dataset(
-        train_metadata_csv(data_root),
+        short_audio_metadata_csv(data_root),
         batch_size=4,
         select_columns=COLUMNS,
         num_epochs=1
