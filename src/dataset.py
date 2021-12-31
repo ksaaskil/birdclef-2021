@@ -79,7 +79,7 @@ def split_to_segments(sample: TensorMap, label: tf.Tensor) -> tf.data.Dataset:
     
     splits = tf.py_function(split_audio, [audio], tf.float32)
     
-    return tf.data.Dataset.from_tensor_slices({"segment": splits}).map(lambda x: ({**sample, **x}, label))
+    return tf.data.Dataset.from_tensor_slices({"segment": splits, "segment_i": tf.range(tf.shape(splits)[0])}).map(lambda x: ({**sample, **x}, label))
 
 
 def add_label(classes: typing.Sequence[str]):
@@ -104,7 +104,14 @@ def add_spectrogram(sample, label):
 def add_audio_fn(sample: TensorMap, label: tf.Tensor) -> typing.Tuple[TensorMap, tf.Tensor]:
     return add_audio(sample), label
 
+def add_fold(buckets=5):
+    def add_(sample, label):
+        fold = tf.strings.to_hash_bucket(sample["filename"], num_buckets=buckets)
+        return {**sample, "fold": fold}, label
+
+    return add_
+
 def short_audio_ds(data_root=DATA_ROOT) -> tf.data.Dataset:
     metadata_ds = short_audio_metadata_ds(data_root=data_root)
     classes = classes_(metadata_ds)
-    return metadata_ds.map(add_label(classes)).map(add_audio_fn).flat_map(split_to_segments).map(add_spectrogram)
+    return metadata_ds.map(add_label(classes)).map(add_fold()).map(add_audio_fn).flat_map(split_to_segments).map(add_spectrogram)
