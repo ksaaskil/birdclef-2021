@@ -45,6 +45,12 @@ $ kaggle competitions download birdclef-2021 -p data -f train_metadata.csv
 $ unzip data/train_metadata.csv.zip -d data
 ```
 
+### Pull data files
+
+```bash
+$ dvc pull
+```
+
 ### Create down-sampled dataset
 
 Create smaller dataset in `data/` folder:
