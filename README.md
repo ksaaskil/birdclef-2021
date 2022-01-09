@@ -127,3 +127,35 @@ List and stop instances:
 $ gcloud compute instances list
 $ gcloud compute instances stop INSTANCE_NAME
 ```
+
+## Setting up a development instance in Vertex AI
+
+Create a user-managed notebook in Vertex AI Workbench.
+
+SSH to the instance with `jupyter` username:
+
+```bash
+$ gcloud compute ssh jupyter@bird-explore
+```
+
+Setup SSH configuration:
+
+```bash
+$ gcloud compute config-ssh
+```
+
+Switch `User` in `~/.ssh/config`:
+
+```
+# ~/.ssh/config
+Host some-host
+  User jupyter
+```
+
+Connecting from VS Code using the SSH host should now use `jupyter` as user, allowing you to use `/home/jupyter` for files and save remotely.
+
+You can also setup port forwarding to `localhost` with:
+
+```bash
+$ gcloud compute ssh jupyter@bird-explore -- -L 8080:localhost:8080
+```
