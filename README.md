@@ -12,6 +12,8 @@ $ pip install -e '.[dev]'
 
 On Linux, you also need to run `sudo apt-get install libsndfile1`.
 
+Install also TensorFlow if not installed in your environment.
+
 ### Setup `kaggle`
 
 Sign in to Kaggle. Follow the [instructions](https://github.com/Kaggle/kaggle-api) to prepare `~/.kaggle/kaggle.json` file.
