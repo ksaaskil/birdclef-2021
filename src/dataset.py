@@ -10,7 +10,7 @@ import numpy as np
 import src.preprocess
 from src.spectrogram import compute_mel_spectrogram
 
-_DATA_ROOT = "gs://bird-clef-kimmo/data"
+_DATA_ROOT = "gs://bird-clef-v2/data"
 _TRAIN_METADATA_CSV = "train_metadata.csv"
 
 SR = 32000
