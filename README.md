@@ -45,6 +45,14 @@ $ kaggle competitions download birdclef-2021 -p data -f train_metadata.csv
 $ unzip data/train_metadata.csv.zip -d data
 ```
 
+### Create down-sampled dataset
+
+Create smaller dataset in `data/` folder:
+
+```bash
+$ python -m src.sample
+```
+
 ### Setup Jupyter
 
 Install kernel:
