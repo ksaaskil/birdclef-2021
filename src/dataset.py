@@ -1,16 +1,15 @@
 import contextlib
 import logging
-import importlib
+import os
 import typing
 
 import tensorflow_io as tfio
 import tensorflow as tf
 import numpy as np
 
-import src.preprocess
 from src.spectrogram import compute_mel_spectrogram
 
-_DATA_ROOT = "gs://bird-clef-v2/data"
+_DATA_ROOT = os.getenv("DATA_ROOT", "gs://bird-clef-v2/data")
 _TRAIN_METADATA_CSV = "train_metadata.csv"
 
 SR = 32000
@@ -32,15 +31,27 @@ def train_short_audio_data() -> str:
 
 
 @contextlib.contextmanager
-def use_data_root(data_root: str):
+def use_data_root(root: str):
     global _DATA_ROOT
     original = _DATA_ROOT
 
     try:
-        _DATA_ROOT = data_root
+        _DATA_ROOT = root
         yield
     finally:
         _DATA_ROOT = original
+
+
+@contextlib.contextmanager
+def use_train_metadata_csv(filename: str):
+    global _TRAIN_METADATA_CSV
+    original = _TRAIN_METADATA_CSV
+
+    try:
+        _TRAIN_METADATA_CSV = filename
+        yield
+    finally:
+        _TRAIN_METADATA_CSV = original
 
 
 def short_audio_metadata_csv() -> str:

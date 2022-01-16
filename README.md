@@ -12,39 +12,10 @@ $ pip install -e '.[dev]'
 
 On Linux, you also need to run `sudo apt-get install libsndfile1`.
 
-Install also TensorFlow if not installed in your environment.
-
-### Setup `kaggle`
-
-Sign in to Kaggle. Follow the [instructions](https://github.com/Kaggle/kaggle-api) to prepare `~/.kaggle/kaggle.json` file.
-
-### Working with data
-
-See the [Data](https://www.kaggle.com/c/birdclef-2021/data) page.
-
-Download the full 39 GiB dataset:
+Install also TensorFlow if not installed in your environment:
 
 ```bash
-$ kaggle competitions download birdclef-2021 -p data
-```
-
-Download single file:
-
-```bash
-$ kaggle competitions download birdclef-2021 -p data/train_short_audio/acafly -f train_short_audio/acafly/XC109605.ogg
-```
-
-List all files in CSV format
-
-```bash
-$ kaggle competitions files birdclef-2021 --csv
-```
-
-Download `train_metadata.csv`:
-
-```bash
-$ kaggle competitions download birdclef-2021 -p data -f train_metadata.csv
-$ unzip data/train_metadata.csv.zip -d data
+$ pip install -e .[tf]
 ```
 
 ### Pull data files
@@ -144,7 +115,7 @@ $ gcloud compute instances list
 $ gcloud compute instances stop INSTANCE_NAME
 ```
 
-## Setting up a development instance in Vertex AI
+### Setting up a development instance in Vertex AI
 
 Create a user-managed notebook in Vertex AI Workbench.
 
@@ -173,5 +144,38 @@ Connecting from VS Code using the SSH host should now use `jupyter` as user, all
 You can also setup port forwarding to `localhost` with:
 
 ```bash
-$ gcloud compute ssh jupyter@bird-explore -- -L 8080:localhost:8080
+$ gcloud compute ssh jupyter@bird-explore -- -N -L 8080:localhost:8080
+```
+
+### Setting up `kaggle`
+
+Sign in to Kaggle. Follow the [instructions](https://github.com/Kaggle/kaggle-api) to prepare `~/.kaggle/kaggle.json` file.
+
+### Working with data
+
+See the [Data](https://www.kaggle.com/c/birdclef-2021/data) page.
+
+Download the full 39 GiB dataset:
+
+```bash
+$ kaggle competitions download birdclef-2021 -p data
+```
+
+Download single file:
+
+```bash
+$ kaggle competitions download birdclef-2021 -p data/train_short_audio/acafly -f train_short_audio/acafly/XC109605.ogg
+```
+
+List all files in CSV format
+
+```bash
+$ kaggle competitions files birdclef-2021 --csv
+```
+
+Download `train_metadata.csv`:
+
+```bash
+$ kaggle competitions download birdclef-2021 -p data -f train_metadata.csv
+$ unzip data/train_metadata.csv.zip -d data
 ```
