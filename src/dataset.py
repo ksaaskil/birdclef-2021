@@ -17,6 +17,8 @@ SPLIT_SECS = 5
 
 BATCH_SIZE = 32
 
+logger = logging.getLogger(__name__)
+
 
 def data_root() -> str:
     return _DATA_ROOT
@@ -36,6 +38,7 @@ def use_data_root(root: str):
     original = _DATA_ROOT
 
     try:
+        logger.info(f"Switching to data root: {root}")
         _DATA_ROOT = root
         yield
     finally:
@@ -81,9 +84,13 @@ def short_audio_metadata_ds() -> tf.data.Dataset:
         row = {**row, "file_path": get_file_path(row)}
         return row
 
+    metadata_csv = short_audio_metadata_csv()
+
+    logger.info(f"Reading dataset CSV from {metadata_csv}")
+
     return (
         tf.data.experimental.make_csv_dataset(
-            short_audio_metadata_csv(),
+            metadata_csv,
             batch_size=1,
             select_columns=COLUMNS,
             num_epochs=1
@@ -222,4 +229,5 @@ def short_audio_ds() -> tf.data.Dataset:
 
 
 def configure_for_training(ds: tf.data.Dataset) -> tf.data.Dataset:
+    logger.info(f"Configuring dataset for training")
     return ds.cache().batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)

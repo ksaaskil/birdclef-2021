@@ -38,6 +38,12 @@ $ python -m src.sample
 $ python -m src.download
 ```
 
+### Train model
+
+```bash
+$ python -m src.train --model baseline --data-dir data
+```
+
 ### Setup Jupyter
 
 Install kernel:

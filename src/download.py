@@ -18,7 +18,7 @@ def exec_cmd(cmd):
 
 
 def gs_copy(src: str, dst: str):
-    cmd = ["gsutil", "cp", src, dst]
+    cmd = ["gsutil", "-m", "cp", src, dst]
     exec_cmd(cmd)
 
 
@@ -35,8 +35,9 @@ def main():
         for sample in ds.as_numpy_iterator():
             filename = f"train_short_audio/{sample['primary_label'].decode()}/{sample['filename'].decode()}"
             src = f"{SOURCE_DIR}/{filename}"
-            dst = Path(data_root).joinpath(filename)
-            print(f"Copying from {src} to {dst}")
+            dst = Path(data_root).joinpath(filename).resolve()
+            logger.info(f"Copying from {src} to {dst}")
+            gs_copy(src, str(dst))
 
 
 if __name__ == "__main__":
