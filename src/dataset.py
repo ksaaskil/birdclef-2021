@@ -77,13 +77,21 @@ def short_audio_metadata_ds() -> tf.data.Dataset:
     def squeeze(row):
         return {key: tf.squeeze(value, axis=0) for key, value in row.items()}
 
-    return tf.data.experimental.make_csv_dataset(
-        short_audio_metadata_csv(),
-        batch_size=1,
-        select_columns=COLUMNS,
-        num_epochs=1
-        # ).flat_map(lambda x: tf.data.Dataset.from_tensor_slices(x)) # Generate_scalars
-    ).map(squeeze)
+    def add_file_path(row):
+        row = {**row, "file_path": get_file_path(row)}
+        return row
+
+    return (
+        tf.data.experimental.make_csv_dataset(
+            short_audio_metadata_csv(),
+            batch_size=1,
+            select_columns=COLUMNS,
+            num_epochs=1
+            # ).flat_map(lambda x: tf.data.Dataset.from_tensor_slices(x)) # Generate_scalars
+        )
+        .map(squeeze)
+        .map(add_file_path)
+    )
 
 
 def classes_(metadata_ds: tf.data.Dataset) -> typing.Sequence[str]:
@@ -118,10 +126,16 @@ def read_file(url) -> tf.Tensor:
     )  # remove channel axis
 
 
-def add_audio(row):
+def get_file_path(row) -> str:
+    """Full path to audio file."""
     filename = row["filename"]
     primary_label = row["primary_label"]
     file_url = train_short_audio_data() + "/" + primary_label + "/" + filename
+    return file_url
+
+
+def add_audio(row):
+    file_url = get_file_path(row)
     [
         audio,
     ] = tf.py_function(read_file, [file_url], [tf.float32])

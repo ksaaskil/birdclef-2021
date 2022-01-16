@@ -32,6 +32,12 @@ Create smaller dataset in `data/` folder:
 $ python -m src.sample
 ```
 
+### Download subset of files from Google Storage bucket
+
+```bash
+$ python -m src.download
+```
+
 ### Setup Jupyter
 
 Install kernel:

@@ -1,4 +1,4 @@
 outs:
-- md5: c4db0b13534a12b64f2abbfb3478131d
-  size: 1462612
+- md5: e58d117320f0d9927429e7c46d95833d
+  size: 145927
   path: train_metadata_small.csv

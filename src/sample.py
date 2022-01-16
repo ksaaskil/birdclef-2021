@@ -14,6 +14,9 @@ def read_csv() -> pd.DataFrame:
 COUNTRIES = ("FI",)
 
 
+FRACTION = 0.1
+
+
 def main():
     with use_data_root("data/"):
         df = read_csv()
@@ -27,10 +30,15 @@ def main():
 
         print(f"Filtered to {len(filtered)} rows")
 
+        filtered = filtered.sample(frac=FRACTION, random_state=42)
+
+        print(f"Filtered to {len(filtered)} rows")
+
         output = Path("data") / "train_metadata_small.csv"
 
         print(f"Writing to file: {output}")
         filtered.to_csv(output, index=False)
+
 
 if __name__ == "__main__":
     main()

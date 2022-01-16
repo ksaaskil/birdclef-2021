@@ -1,16 +1,9 @@
-"""
-Download files one by one.
-"""
+"""Download files matching given metadata dataset."""
 import logging
 from pathlib import Path
 import subprocess
 
-from tenacity import wait_exponential, Retrying, before_sleep_log
-import pandas as pd
-
-DATA_FOLDER = Path("data")
-COMPETITION_NAME = "birdclef-2021"
-
+from src.dataset import use_data_root, use_train_metadata_csv, short_audio_metadata_ds
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -24,59 +17,27 @@ def exec_cmd(cmd):
         raise Exception(f"Command failed: {cmd}")
 
 
-def download_one(primary_label: str, filename: str):
-
-    target_folder = DATA_FOLDER.joinpath("train_short_audio").joinpath(primary_label)
-    target_file = target_folder.joinpath(filename)
-
-    if Path(target_file).exists():
-        print(f"File exists, skipping downloading: {target_file}")
-        return
-
-    cmd = [
-        "kaggle",
-        "competitions",
-        "download",
-        COMPETITION_NAME,
-        "-p",
-        str(target_folder),
-        "-f",
-        f"train_short_audio/{primary_label}/{filename}",
-    ]
-
-    for attempt in Retrying(
-        wait=wait_exponential(multiplier=1, min=30, max=300),
-        before_sleep=before_sleep_log(logger, logging.DEBUG),
-    ):
-        with attempt:
-            exec_cmd(cmd)
-
-    if not target_file.exists():
-        zip_file = Path(f"{target_file}.zip")
-
-        if not zip_file.exists():
-            raise Exception(f"Expected to exist: {zip_file}")
-
-        cmd = ["unzip", str(zip_file), "-d", str(zip_file.parent)]
-        exec_cmd(cmd)
-
-        zip_file.unlink()
-
-    assert target_file.exists(), f"Expected to exist: {target_file}"
+def gs_copy(src: str, dst: str):
+    cmd = ["gsutil", "cp", src, dst]
+    exec_cmd(cmd)
 
 
-def download(metadata_file: Path):
-    df = pd.read_csv(metadata_file)
+SOURCE_DIR = "gs://bird-clef-v2/data"
 
-    primary_label_and_filename = list(
-        df[["primary_label", "filename"]].apply(tuple, axis=1)
-    )
 
-    for row in primary_label_and_filename:
-        download_one(*row)
+def main():
+    # TODO
+
+    data_root = "data"
+    with use_data_root("data"), use_train_metadata_csv("train_metadata_small.csv"):
+        ds = short_audio_metadata_ds()
+
+        for sample in ds.as_numpy_iterator():
+            filename = f"train_short_audio/{sample['primary_label'].decode()}/{sample['filename'].decode()}"
+            src = f"{SOURCE_DIR}/{filename}"
+            dst = Path(data_root).joinpath(filename)
+            print(f"Copying from {src} to {dst}")
 
 
 if __name__ == "__main__":
-    download(
-        metadata_file=DATA_FOLDER.joinpath("sampled").joinpath("train_metadata.csv")
-    )
+    main()
