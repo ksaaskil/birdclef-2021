@@ -238,7 +238,7 @@ def pick_fold(fold: int):
 
 def skip_fold(fold: int):
     def filter_fn(sample, _):
-        return tf.logical_not(tf.math.equal(sample["fold"], fold))
+        return tf.math.not_equal(sample["fold"], fold)
 
     return filter_fn
 
@@ -247,8 +247,8 @@ def split_dataset(
     ds: tf.data.Dataset,
 ) -> typing.Tuple[tf.data.Dataset, tf.data.Dataset]:
     logger.info(f"Splitting dataset to training and validation")
-    train_ds = ds.filter(skip_fold(5))
-    val_ds = ds.filter(pick_fold(5))
+    train_ds = ds.filter(skip_fold(0))
+    val_ds = ds.filter(pick_fold(0))
     return train_ds, val_ds
 
 
