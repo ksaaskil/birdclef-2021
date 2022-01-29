@@ -8,5 +8,5 @@ RESOURCES = Path("tests") / "resources"
 
 def test_train():
     with use_data_root(str(RESOURCES)):
-        config = TrainingConfig(epochs=5)
+        config = TrainingConfig(epochs=2)
         train("smoke-test", config=config)

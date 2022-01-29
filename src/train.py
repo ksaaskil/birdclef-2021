@@ -11,6 +11,7 @@ from src.dataset import (
     use_data_root,
     short_audio_ds,
     configure_for_training,
+    use_train_metadata_csv,
 )
 
 
@@ -22,8 +23,9 @@ def compile(model):
         optimizer=optimizers.RMSprop(),
         # labels are one-hot encoded so SparseCategoricalCrossentropy does not apply
         loss=losses.CategoricalCrossentropy(),
-        metrics=[metrics.SparseCategoricalAccuracy()],
+        metrics=[metrics.CategoricalAccuracy()],
     )
+    return model
 
 
 @dataclass(frozen=True)
@@ -40,16 +42,24 @@ def train(model_name: str, config: TrainingConfig):
     model_builder = get_model_builder(model_name)
 
     dataset = short_audio_ds()
-    dataset = configure_for_training(dataset)
+    train_ds, val_ds = configure_for_training(dataset)
 
     model = model_builder(ModelBuilderConfig(n_classes=len(classes)))
 
     logger.info("Model summary")
     model.summary()
 
-    compile(model)
+    model = compile(model)
 
-    model.fit(dataset, epochs=config.epochs, batch_size=config.batch_size)
+    model.fit(train_ds, epochs=config.epochs, validation_data=val_ds)
+
+    """ for i, (x, y) in enumerate(dataset.take(64)):
+        print(i)
+        s = model.call(x)
+        print(s)
+        print(y)
+        cce = losses.CategoricalCrossentropy()
+        print(cce(y, s).numpy()) """
 
 
 DEFAULT_DATA_DIR = "tests/resources"
@@ -60,6 +70,7 @@ def _parse_args():
 
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--data-dir", default=DEFAULT_DATA_DIR)
+    parser.add_argument("--metadata-csv", default=None)
 
     return parser.parse_args()
 
@@ -70,12 +81,18 @@ def main():
     args = _parse_args()
     model = args.model
     data_dir = args.data_dir
+    metadata_csv = args.metadata_csv
 
     data_ctx = use_data_root(data_dir) if data_dir else contextlib.nullcontext()
+    metadata_csv_ctx = (
+        use_train_metadata_csv(filename=metadata_csv)
+        if metadata_csv
+        else contextlib.nullcontext()
+    )
 
     config = TrainingConfig()
 
-    with data_ctx:
+    with data_ctx, metadata_csv_ctx:
         train(model, config)
 
 

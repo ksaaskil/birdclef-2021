@@ -51,6 +51,7 @@ def use_train_metadata_csv(filename: str):
     original = _TRAIN_METADATA_CSV
 
     try:
+        logger.info(f"Switching to use metadata csv: {filename}")
         _TRAIN_METADATA_CSV = filename
         yield
     finally:
@@ -118,7 +119,7 @@ def read_classes() -> typing.Sequence[str]:
 def primary_label_to_tensor(
     primary_label: str, classes: typing.Sequence[str]
 ) -> tf.Tensor:
-    return tf.cast(classes == primary_label, tf.int32)
+    return tf.cast(classes == primary_label, tf.float32)
 
 
 def tensor_to_class(label: tf.Tensor, classes: typing.Sequence[str]) -> str:
@@ -228,6 +229,35 @@ def short_audio_ds() -> tf.data.Dataset:
     )
 
 
-def configure_for_training(ds: tf.data.Dataset) -> tf.data.Dataset:
-    logger.info(f"Configuring dataset for training")
-    return ds.cache().batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+def pick_fold(fold: int):
+    def filter_fn(sample, _):
+        return tf.math.equal(sample["fold"], fold)
+
+    return filter_fn
+
+
+def skip_fold(fold: int):
+    def filter_fn(sample, _):
+        return tf.logical_not(tf.math.equal(sample["fold"], fold))
+
+    return filter_fn
+
+
+def split_dataset(
+    ds: tf.data.Dataset,
+) -> typing.Tuple[tf.data.Dataset, tf.data.Dataset]:
+    logger.info(f"Splitting dataset to training and validation")
+    train_ds = ds.filter(skip_fold(5))
+    val_ds = ds.filter(pick_fold(5))
+    return train_ds, val_ds
+
+
+def configure_for_training(
+    ds: tf.data.Dataset,
+) -> typing.Tuple[tf.data.Dataset, tf.data.Dataset]:
+    logger.info(f"Preparing dataset for training")
+    train_ds, val_ds = split_dataset(ds)
+    return (
+        train_ds.cache().batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE),
+        val_ds.cache().batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE),
+    )
