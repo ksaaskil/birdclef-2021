@@ -41,7 +41,7 @@ $ python -m src.download
 ### Train model
 
 ```bash
-$ python -m src.train --model baseline --data-dir data
+$ python -m src.train --model smoke-test --data-dir data --metadata-csv train_metadata_small.csv
 ```
 
 ### Setup Jupyter
